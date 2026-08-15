@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# แอปติวสอบ Multimedia Technology
 
-## Getting Started
+แอปทดสอบตัวเองสำหรับสอบกลางภาค วิชา 06016403 Multimedia Technology
+Next.js (App Router) + TypeScript + Tailwind — เป็น static ทั้งหมด ไม่มี backend / database
+ทุกอย่างเก็บใน localStorage ของเบราว์เซอร์
 
-First, run the development server:
+## รันในเครื่อง
+
+```bash
+npm install
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deploy ขึ้น Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. push โปรเจกต์นี้ขึ้น GitHub
+2. ที่ vercel.com กด **Add New → Project** แล้วเลือก repo นี้
+3. Vercel ตรวจเจอ Next.js เอง กด Deploy ได้เลย ไม่ต้องตั้งค่าอะไรเพิ่ม
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## หน้าจอ
 
-## Learn More
+```
+/            หน้าแรก — 3 ปุ่ม (ทำแบบทดสอบ / รายบท / ประวัติ) + ปุ่มทำต่อถ้ามีชุดค้างอยู่
+/start       ตั้งค่าชุดรวม — จับเวลา, เลือกบท, จำนวนข้อ, เริ่ม
+/chapters    รายบท — จับเวลา แล้วกดชื่อบทเริ่มได้เลย
+/quiz        ทำข้อสอบ / หน้าคะแนน / โหมดดูเฉลย (อ่านชุดที่เปิดอยู่จาก store)
+/history     ประวัติทุกชุด ทำต่อได้ ดูสถิติได้ ลบได้
+```
 
-To learn more about Next.js, take a look at the following resources:
+## ไฟล์
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+components/
+  QuestionCard.tsx  การ์ดคำถาม รองรับทั้งปรนัยและโจทย์คำนวณ
+  Figures.tsx       รูปประกอบ วาดเป็น SVG รองรับโหมดมืด
+  ui.tsx            Shell, PageHeader, OptionRow, ปุ่มสลับธีม
+data/
+  ch1.ts … ch6.ts   คลังข้อสอบแยกรายบท
+  calc.ts           โจทย์คำนวณแบบเขียนตอบ
+  tags.ts           รายชื่อบทและแท็กหัวข้อความรู้
+lib/
+  types.ts    ชนิดข้อมูลของคำถาม
+  session.ts  โครงสร้างชุดข้อสอบ + การเลือกข้อให้กระจายเท่ากันทุกบท
+  store.ts    localStorage ของชุดข้อสอบทั้งหมด (useSyncExternalStore)
+  quiz.ts     การสลับตัวเลือก, ตรวจโจทย์คำนวณ, จัดรูปแบบเวลา
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## พฤติกรรมที่ตั้งใจไว้
 
-## Deploy on Vercel
+- **ทำค้างได้** ทุกครั้งที่ตอบหรือเปลี่ยนข้อ จะบันทึกลงเครื่องทันที ปิดแล้วเปิดใหม่มีปุ่ม "ทำต่อ" บนหน้าแรก
+- **เฉลยทันทีเสมอ** ตอบแล้วเห็นคำอธิบายเลย ไม่ว่าจะจับเวลาหรือไม่ การจับเวลาเป็นแค่นาฬิกานับถอยหลัง หมดเวลาแล้วส่งอัตโนมัติ
+- **เวลาเดินเฉพาะตอนเปิดหน้าทำข้อสอบ** ปิดหน้าไปนาฬิกาหยุด กลับมาแล้วนับต่อ บันทึกเวลาลงเครื่องทุก 15 วินาที
+- **แบ่งข้อเท่ากันทุกบท** บทไหนข้อไม่พอโควตา ส่วนที่ขาดจะเกลี่ยไปบทอื่นให้ครบตามจำนวนที่ขอ
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## การเพิ่มข้อสอบ
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+เพิ่มออบเจ็กต์ลงในอาร์เรย์ของไฟล์บทที่ต้องการ
+
+ข้อปรนัย:
+
+```ts
+{
+  id: "ch3-gen-1",
+  chapter: "ch3",
+  source: "generated",      // "past" = ข้อสอบจากควิซ
+  type: "mcq",
+  stars: 2,                 // 1–3
+  tags: ["jpeg"],           // ต้องมีอยู่ใน data/tags.ts
+  prompt: "…",
+  figure: "convolution",    // ไม่บังคับ — key ใน components/Figures.tsx
+  choices: [
+    { id: "a", text: "…", why: "เหตุผลว่าทำไมถูก/ผิด" },
+    { id: "e", text: "ถูกทุกข้อ", why: "…", pin: true },  // pin = ไม่ถูกสลับตำแหน่ง
+  ],
+  answer: "a",
+  explanation: "…",
+}
+```
+
+โจทย์คำนวณ:
+
+```ts
+{
+  id: "ch3-calc-9",
+  chapter: "ch3",
+  source: "generated",
+  type: "numeric",
+  stars: 2,
+  tags: ["image-filesize"],
+  prompt: "…",
+  answer: 18,
+  tolerance: 0.1,     // ค่าคลาดเคลื่อนสัมบูรณ์ที่ยอมรับ
+  unit: "MB",
+  solution: "วิธีทำทีละขั้น",
+  explanation: "…",
+}
+```
+
+`pin: true` ใช้กับตัวเลือกอย่าง "ถูกทุกข้อ" / "ไม่มีข้อถูก" ซึ่งต้องอยู่ท้ายเสมอ
+ไม่งั้นเมื่อสลับตัวเลือกแล้วโจทย์จะอ่านไม่รู้เรื่อง
+
+## สถานะคลังข้อสอบ (รวม 172 ข้อ)
+
+| บท | ข้อสอบจากควิซ | โจทย์คำนวณ | ข้อฝึกเพิ่ม | รวม |
+|---|---|---|---|---|
+| บทที่ 1 Introduction | 10 | – | 20 | 30 |
+| บทที่ 2 Digital Media Representations | 12 | 4 | 20 | 36 |
+| บทที่ 3 Bitmapped Images | 13 | 3 | 20 | 36 |
+| บทที่ 4 Color Science | 13 | 1 | 20 | 34 |
+| บทที่ 5 Digital Video | 13 | 3 | 20 | 36 |
+| บทที่ 6 2D & 3D Graphics | – | – | – | 0 |
+
+ข้อฝึกเพิ่มของแต่ละบทมีสัดส่วนความยาก ★ 5 ข้อ · ★★ 10 ข้อ · ★★★ 5 ข้อ เท่ากันทุกบท
+และเน้นหัวข้อที่สไลด์สอนไว้แต่ยังไม่เคยออกในควิซของอาจารย์
+
+ข้อสอบจากควิซทั้ง 61 ข้อถูกใส่แท็กหัวข้อ ระดับดาว และคำอธิบายรายตัวเลือกเพิ่มเข้าไปแล้ว
+รูปประกอบ 5 รูปที่ข้อสอบต้นฉบับอ้างถึงถูกวาดขึ้นใหม่เป็น SVG และมีหมายเหตุกำกับไว้ในแต่ละข้อ
+
+ไฟล์ `chN.ts` เก็บข้อสอบจากควิซ ส่วน `chN-gen.ts` เก็บข้อฝึกเพิ่มของบทนั้น
