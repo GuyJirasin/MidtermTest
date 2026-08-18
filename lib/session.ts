@@ -1,6 +1,6 @@
 import { QUESTIONS_BY_CHAPTER } from "@/data";
 import { shuffle } from "./quiz";
-import type { ChapterId, Question } from "./types";
+import type { ChapterId, Question, SubjectId } from "./types";
 
 /** mixed = คละหลายบทในชุดเดียว, chapter = ชุดของบทเดียว */
 export type QuizMode = "mixed" | "chapter";
@@ -12,6 +12,8 @@ export interface Answer {
 
 export interface QuizSession {
   id: string;
+  /** วิชาของชุดนี้ — ชุดเก่าที่บันทึกไว้ก่อนมีหลายวิชาจะไม่มีฟิลด์นี้ ให้ถือเป็น "mm" */
+  subject?: SubjectId;
   mode: QuizMode;
   chapters: ChapterId[];
   questionIds: string[];
@@ -28,6 +30,7 @@ export interface QuizSession {
 }
 
 export function createSession(opts: {
+  subject: SubjectId;
   mode: QuizMode;
   chapters: ChapterId[];
   questionIds: string[];
@@ -36,6 +39,7 @@ export function createSession(opts: {
   const now = Date.now();
   return {
     id: `s${now.toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+    subject: opts.subject,
     mode: opts.mode,
     chapters: opts.chapters,
     questionIds: opts.questionIds,
@@ -90,6 +94,11 @@ export function scoreOf(session: QuizSession): { correct: number; answered: numb
     answered: values.length,
     total: session.questionIds.length,
   };
+}
+
+/** ชุดเก่าที่ยังไม่มีฟิลด์ subject ล้วนเป็นข้อสอบ Multimedia */
+export function subjectOf(session: QuizSession): SubjectId {
+  return session.subject ?? "mm";
 }
 
 export function isFinished(session: QuizSession): boolean {

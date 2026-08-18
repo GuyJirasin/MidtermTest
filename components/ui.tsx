@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { setDarkMode, useIsDark } from "@/lib/store";
+import { SUBJECTS } from "@/data/tags";
+import { setDarkMode, setSubject, useIsDark, useSubject } from "@/lib/store";
 
 export function ThemeToggle() {
   const dark = useIsDark();
@@ -14,6 +15,41 @@ export function ThemeToggle() {
     >
       {dark ? "☀ สว่าง" : "☾ มืด"}
     </button>
+  );
+}
+
+/** ปุ่มสลับวิชา — ใช้ทั้งหน้าแรกและหน้าตั้งค่าชุดข้อสอบ */
+export function SubjectPicker() {
+  const current = useSubject();
+  return (
+    <div>
+      <p className="mb-1 font-semibold">เลือกวิชา</p>
+      <p className="meta mb-2">เลือกก่อนเริ่มทำ ระบบจะออกข้อสอบเฉพาะวิชานี้</p>
+      <div className="flex flex-wrap gap-2">
+        {SUBJECTS.map((s) => {
+          const active = s.id === current;
+          return (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setSubject(s.id)}
+              aria-pressed={active}
+              className="btn flex-1 justify-start text-left"
+              style={
+                active
+                  ? { background: "var(--clay)", borderColor: "var(--clay)", color: "var(--on-clay)" }
+                  : undefined
+              }
+            >
+              <span>
+                <span className="font-semibold">{s.name}</span>
+                <span className="block text-[13px] opacity-80">{s.scope}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

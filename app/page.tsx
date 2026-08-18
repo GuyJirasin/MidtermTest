@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CHAPTER_BY_ID } from "@/data/tags";
-import { scoreOf } from "@/lib/session";
-import { openSession, unfinishedSession, useVault } from "@/lib/store";
-import { ThemeToggle } from "@/components/ui";
+import { CHAPTER_BY_ID, SUBJECT_BY_ID } from "@/data/tags";
+import { scoreOf, subjectOf } from "@/lib/session";
+import { openSession, unfinishedSession, useSubject, useVault } from "@/lib/store";
+import { SubjectPicker, ThemeToggle } from "@/components/ui";
 
 export default function HomePage() {
   const router = useRouter();
   const vault = useVault();
+  const subject = useSubject();
   const pending = unfinishedSession(vault);
 
   function resume() {
@@ -22,8 +23,8 @@ export default function HomePage() {
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-4 py-8 sm:px-6">
       <header className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-semibold">Test MM</h1>
-          <p className="meta">Made by Guy &amp; Claude</p>
+          <h1 className="text-3xl font-semibold">Test Prep</h1>
+          <p className="meta">{SUBJECT_BY_ID.get(subject)?.fullName} · Made by Guy &amp; Claude</p>
         </div>
         <ThemeToggle />
       </header>
@@ -34,6 +35,7 @@ export default function HomePage() {
           <section className="panel mb-6 p-5">
             <p className="mb-1 font-semibold">คุณทำค้างไว้</p>
             <p className="meta mb-4">
+              {SUBJECT_BY_ID.get(subjectOf(pending))?.name} ·{" "}
               {pending.mode === "chapter" && pending.chapters[0]
                 ? `บทที่ ${CHAPTER_BY_ID.get(pending.chapters[0])?.number} · `
                 : "แบบทดสอบรวม · "}
@@ -44,6 +46,10 @@ export default function HomePage() {
             </button>
           </section>
         ) : null}
+
+        <section className="mb-8">
+          <SubjectPicker />
+        </section>
 
         <nav className="flex flex-col gap-4">
           <Link href="/start" className="btn btn-main">

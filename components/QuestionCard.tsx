@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Figure } from "./Figures";
-import { CHAPTER_BY_ID, tagLabel } from "@/data/tags";
+import { CHAPTER_BY_ID, SUBJECT_BY_ID, tagLabel } from "@/data/tags";
 import { checkNumeric, isMcq } from "@/lib/quiz";
-import type { Choice, Question } from "@/lib/types";
+import type { Choice, Question, QuestionTable } from "@/lib/types";
 
 interface Props {
   question: Question;
@@ -15,6 +15,48 @@ interface Props {
   bookmarked: boolean;
   onAnswer: (value: string, correct: boolean) => void;
   onToggleBookmark: () => void;
+}
+
+/** ตารางประกอบโจทย์ — เลื่อนแนวนอนได้เองเมื่อจอแคบ ไม่ดันหน้าให้ล้น */
+function DataTable({ table }: { table: QuestionTable }) {
+  return (
+    <figure className="mt-4">
+      {table.caption ? <figcaption className="meta mb-1">{table.caption}</figcaption> : null}
+      <div className="overflow-x-auto rounded-lg border" style={{ borderColor: "var(--border)" }}>
+        <table className="w-full border-collapse text-[15px]">
+          <thead>
+            <tr>
+              {table.head.map((h) => (
+                <th
+                  key={h}
+                  scope="col"
+                  className="whitespace-nowrap px-3 py-2 text-left font-semibold"
+                  style={{ background: "var(--bg)", borderBottom: "1px solid var(--border-strong)" }}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {table.rows.map((row, i) => (
+              <tr key={i}>
+                {row.map((cell, j) => (
+                  <td
+                    key={j}
+                    className="whitespace-nowrap px-3 py-2"
+                    style={{ borderTop: i === 0 ? undefined : "1px solid var(--border)" }}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </figure>
+  );
 }
 
 function optionState(revealed: boolean, isAnswer: boolean, isPicked: boolean) {
@@ -60,7 +102,8 @@ export function QuestionCard({
     <article className="panel p-5 sm:p-6">
       <div className="mb-3 flex items-start justify-between gap-3">
         <p className="meta">
-          บทที่ {chapter?.number} · {question.source === "past" ? "ข้อสอบจากควิซ" : "ข้อฝึกเพิ่ม"} ·{" "}
+          {chapter ? `${SUBJECT_BY_ID.get(chapter.subject)?.name} · ` : null}บทที่ {chapter?.number} ·{" "}
+          {question.source === "past" ? "ข้อสอบจากควิซ" : "ข้อฝึกเพิ่ม"} ·{" "}
           <span title={`ระดับความยาก ${question.stars} ดาว`}>{"★".repeat(question.stars)}</span>
         </p>
         <button
@@ -77,6 +120,11 @@ export function QuestionCard({
 
       <p className="whitespace-pre-line text-[20px] leading-relaxed">{question.prompt}</p>
 
+      {question.table
+        ? (Array.isArray(question.table) ? question.table : [question.table]).map((t, i) => (
+            <DataTable key={t.caption ?? i} table={t} />
+          ))
+        : null}
       {question.figure ? <Figure name={question.figure} /> : null}
       {question.note ? <p className="meta mt-2">หมายเหตุ: {question.note}</p> : null}
 

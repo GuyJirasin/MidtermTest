@@ -1,12 +1,33 @@
-import type { Chapter, Tag } from "@/lib/types";
+import type { Chapter, Subject, SubjectId, Tag } from "@/lib/types";
+
+export const SUBJECTS: Subject[] = [
+  {
+    id: "mm",
+    name: "Multimedia",
+    fullName: "Multimedia Technology",
+    scope: "06016403 · บทที่ 1–6",
+  },
+  {
+    id: "db",
+    name: "Database",
+    fullName: "Database Systems",
+    scope: "Coronel & Rob 10th ed. · บทที่ 1, 3, 4",
+  },
+];
+
+export const DEFAULT_SUBJECT: SubjectId = "mm";
 
 export const CHAPTERS: Chapter[] = [
-  { id: "ch1", number: 1, titleEn: "Introduction to Multimedia Computing", titleTh: "บทนำสู่มัลติมีเดีย" },
-  { id: "ch2", number: 2, titleEn: "Digital Media Representations", titleTh: "การแทนข้อมูลสื่อดิจิทัล" },
-  { id: "ch3", number: 3, titleEn: "Bitmapped Images", titleTh: "ภาพบิตแมป" },
-  { id: "ch4", number: 4, titleEn: "Color Science", titleTh: "วิทยาศาสตร์ของสี" },
-  { id: "ch5", number: 5, titleEn: "Digital Video", titleTh: "วิดีโอดิจิทัล" },
-  { id: "ch6", number: 6, titleEn: "2D & 3D Graphics", titleTh: "กราฟิก 2 มิติและ 3 มิติ" },
+  { id: "ch1", subject: "mm", number: 1, titleEn: "Introduction to Multimedia Computing", titleTh: "บทนำสู่มัลติมีเดีย" },
+  { id: "ch2", subject: "mm", number: 2, titleEn: "Digital Media Representations", titleTh: "การแทนข้อมูลสื่อดิจิทัล" },
+  { id: "ch3", subject: "mm", number: 3, titleEn: "Bitmapped Images", titleTh: "ภาพบิตแมป" },
+  { id: "ch4", subject: "mm", number: 4, titleEn: "Color Science", titleTh: "วิทยาศาสตร์ของสี" },
+  { id: "ch5", subject: "mm", number: 5, titleEn: "Digital Video", titleTh: "วิดีโอดิจิทัล" },
+  { id: "ch6", subject: "mm", number: 6, titleEn: "2D & 3D Graphics", titleTh: "กราฟิก 2 มิติและ 3 มิติ" },
+
+  { id: "db-ch1", subject: "db", number: 1, titleEn: "The Database Approach", titleTh: "แนวทางฐานข้อมูล" },
+  { id: "db-ch3", subject: "db", number: 3, titleEn: "Data Models", titleTh: "โมเดลข้อมูล" },
+  { id: "db-ch4", subject: "db", number: 4, titleEn: "The Relational Model", titleTh: "โมเดลเชิงสัมพันธ์" },
 ];
 
 export const TAGS: Tag[] = [
@@ -91,7 +112,54 @@ export const TAGS: Tag[] = [
   { id: "rasterization", label: "rasterization", chapter: "ch6" },
   { id: "3d-modeling", label: "3D modeling", chapter: "ch6" },
   { id: "rendering", label: "rendering", chapter: "ch6" },
+
+  // DB CH1 — The Database Approach
+  { id: "db-data-info", label: "data / information / knowledge", chapter: "db-ch1" },
+  { id: "db-metadata", label: "metadata & data dictionary", chapter: "db-ch1" },
+  { id: "db-file-limits", label: "ข้อจำกัดของ file system", chapter: "db-ch1" },
+  { id: "db-dependence", label: "structural / data dependence", chapter: "db-ch1" },
+  { id: "db-redundancy", label: "redundancy → inconsistency → anomaly", chapter: "db-ch1" },
+  { id: "db-anomalies", label: "anomalies 3 แบบ", chapter: "db-ch1" },
+  { id: "db-dbms-functions", label: "DBMS functions 9 ข้อ", chapter: "db-ch1" },
+  { id: "db-system-parts", label: "5 ส่วนประกอบของ database system", chapter: "db-ch1" },
+  { id: "db-types", label: "ประเภทของฐานข้อมูล", chapter: "db-ch1" },
+  { id: "db-structure-level", label: "structured / semistructured / unstructured", chapter: "db-ch1" },
+  { id: "db-cost", label: "ข้อดี–ข้อเสียของ database system", chapter: "db-ch1" },
+
+  // DB CH3 — Data Models
+  { id: "db-model-purpose", label: "data model คืออะไร ทำไมต้องมี", chapter: "db-ch3" },
+  { id: "db-building-blocks", label: "building blocks 4 ตัว", chapter: "db-ch3" },
+  { id: "db-relationship-type", label: "1:M / 1:1 / M:N", chapter: "db-ch3" },
+  { id: "db-business-rules", label: "business rules", chapter: "db-ch3" },
+  { id: "db-evolution", label: "วิวัฒนาการของ data model", chapter: "db-ch3" },
+  { id: "db-hierarchical-network", label: "hierarchical / network model", chapter: "db-ch3" },
+  { id: "db-er-oo", label: "ER model / OO model", chapter: "db-ch3" },
+  { id: "db-nosql", label: "Big Data & NoSQL", chapter: "db-ch3" },
+  { id: "db-terminology", label: "ศัพท์ข้ามโมเดล", chapter: "db-ch3" },
+  { id: "db-abstraction", label: "4 ระดับ abstraction", chapter: "db-ch3" },
+  { id: "db-independence", label: "logical / physical independence", chapter: "db-ch3" },
+
+  // DB CH4 — The Relational Model
+  { id: "db-table-chars", label: "คุณลักษณะของตาราง 8 ข้อ", chapter: "db-ch4" },
+  { id: "db-functional-dep", label: "functional dependence", chapter: "db-ch4" },
+  { id: "db-keys", label: "ลำดับชั้นของ key", chapter: "db-ch4" },
+  { id: "db-integrity", label: "entity / referential integrity", chapter: "db-ch4" },
+  { id: "db-nulls", label: "null และ flag", chapter: "db-ch4" },
+  { id: "db-controlled-redundancy", label: "controlled redundancy", chapter: "db-ch4" },
+  { id: "db-dictionary", label: "data dictionary / system catalog", chapter: "db-ch4" },
+  { id: "db-algebra", label: "relational algebra", chapter: "db-ch4" },
+  { id: "db-join", label: "join ทุกชนิด", chapter: "db-ch4" },
+  { id: "db-cardinality", label: "นับ degree / cardinality ของผลลัพธ์", chapter: "db-ch4" },
+  { id: "db-mn-composite", label: "แตก M:N เป็น composite entity", chapter: "db-ch4" },
+  { id: "db-index", label: "index", chapter: "db-ch4" },
+  { id: "db-codd", label: "Codd's rules", chapter: "db-ch4" },
 ];
+
+export const SUBJECT_BY_ID = new Map(SUBJECTS.map((s) => [s.id, s]));
+
+export const CHAPTERS_BY_SUBJECT = Object.fromEntries(
+  SUBJECTS.map((s) => [s.id, CHAPTERS.filter((c) => c.subject === s.id)])
+) as Record<SubjectId, Chapter[]>;
 
 export const TAG_LABEL = new Map(TAGS.map((t) => [t.id, t.label]));
 export const CHAPTER_BY_ID = new Map(CHAPTERS.map((c) => [c.id, c]));

@@ -1,7 +1,9 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { DEFAULT_SUBJECT } from "@/data/tags";
 import type { QuizSession } from "./session";
+import type { SubjectId } from "./types";
 
 const KEY = "mm-quiz-sessions-v2";
 const MAX_SESSIONS = 60;
@@ -98,6 +100,50 @@ export function clearAll() {
 /** ชุดล่าสุดที่ยังทำไม่จบ ใช้แสดงปุ่ม "ทำต่อ" บนหน้าแรก */
 export function unfinishedSession(vault: Vault): QuizSession | null {
   return vault.sessions.find((s) => s.finishedAt === null) ?? null;
+}
+
+/** วิชาที่เลือกไว้ล่าสุด เก็บแยกจาก vault เพราะเป็นแค่ค่าตั้งของหน้าจอ */
+const SUBJECT_KEY = "quiz-subject";
+
+let subjectCache: SubjectId | null = null;
+const subjectListeners = new Set<() => void>();
+
+function subscribeSubject(listener: () => void) {
+  subjectListeners.add(listener);
+  return () => {
+    subjectListeners.delete(listener);
+  };
+}
+
+function readSubject(): SubjectId {
+  if (typeof window === "undefined") return DEFAULT_SUBJECT;
+  try {
+    const raw = window.localStorage.getItem(SUBJECT_KEY);
+    return raw === "mm" || raw === "db" ? raw : DEFAULT_SUBJECT;
+  } catch {
+    return DEFAULT_SUBJECT;
+  }
+}
+
+export function useSubject(): SubjectId {
+  return useSyncExternalStore(
+    subscribeSubject,
+    () => {
+      if (!subjectCache) subjectCache = readSubject();
+      return subjectCache;
+    },
+    () => DEFAULT_SUBJECT
+  );
+}
+
+export function setSubject(subject: SubjectId) {
+  subjectCache = subject;
+  try {
+    window.localStorage.setItem(SUBJECT_KEY, subject);
+  } catch {
+    // ปิด localStorage ไว้ — ยังใช้งานต่อได้ในรอบนี้
+  }
+  for (const listener of subjectListeners) listener();
 }
 
 /** โหมดสว่าง/มืด อยู่บน class ของ <html> ซึ่งเป็น external store เช่นกัน */

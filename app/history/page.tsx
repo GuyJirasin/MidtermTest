@@ -1,18 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CHAPTER_BY_ID } from "@/data/tags";
+import { CHAPTER_BY_ID, SUBJECT_BY_ID } from "@/data/tags";
 import { formatWhen } from "@/lib/quiz";
-import { scoreOf, type QuizSession } from "@/lib/session";
+import { scoreOf, subjectOf, type QuizSession } from "@/lib/session";
 import { clearAll, deleteSession, openSession, useVault } from "@/lib/store";
 import { PageHeader, Shell } from "@/components/ui";
 
 function describe(session: QuizSession): string {
+  const subject = SUBJECT_BY_ID.get(subjectOf(session))?.name ?? "";
   if (session.mode === "chapter" && session.chapters[0]) {
-    return `รายบท · บทที่ ${CHAPTER_BY_ID.get(session.chapters[0])?.number}`;
+    return `${subject} · รายบท บทที่ ${CHAPTER_BY_ID.get(session.chapters[0])?.number}`;
   }
-  if (session.chapters.length === 1) return `บทที่ ${CHAPTER_BY_ID.get(session.chapters[0])?.number}`;
-  return "แบบทดสอบรวมหลายบท";
+  if (session.chapters.length === 1) {
+    return `${subject} · บทที่ ${CHAPTER_BY_ID.get(session.chapters[0])?.number}`;
+  }
+  return `${subject} · รวมหลายบท`;
 }
 
 export default function HistoryPage() {

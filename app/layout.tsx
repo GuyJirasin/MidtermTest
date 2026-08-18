@@ -17,8 +17,8 @@ const notoSerifThai = Noto_Serif_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "Test MM",
-  description: "แอปทดสอบตัวเองสำหรับสอบกลางภาควิชา Multimedia Technology",
+  title: "Test Prep",
+  description: "แอปทดสอบตัวเองสำหรับสอบกลางภาค วิชา Multimedia Technology และ Database Systems",
 };
 
 const themeScript = `(function(){try{var t=localStorage.getItem('mm-quiz-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`;

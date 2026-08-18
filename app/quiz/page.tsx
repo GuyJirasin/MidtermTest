@@ -8,7 +8,7 @@ import { CHAPTER_BY_ID, tagLabel } from "@/data/tags";
 import { QuestionCard } from "@/components/QuestionCard";
 import { Shell } from "@/components/ui";
 import { formatClock, isMcq, shuffleChoices } from "@/lib/quiz";
-import { createSession, scoreOf, type QuizSession } from "@/lib/session";
+import { createSession, scoreOf, subjectOf, type QuizSession } from "@/lib/session";
 import { saveSession, startSession, useVault } from "@/lib/store";
 import type { ChapterId, Choice, Question } from "@/lib/types";
 
@@ -115,6 +115,7 @@ export default function QuizPage() {
       if (!session || !wrongIds.length) return;
       startSession(
         createSession({
+          subject: subjectOf(session),
           mode: session.mode,
           chapters: session.chapters,
           questionIds: wrongIds,

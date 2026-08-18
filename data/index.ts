@@ -10,6 +10,9 @@ import { ch4Generated } from "./ch4-gen";
 import { ch5Questions } from "./ch5";
 import { ch5Generated } from "./ch5-gen";
 import { ch6Questions } from "./ch6";
+import { dbCh1Questions } from "./db-ch1";
+import { dbCh3Questions } from "./db-ch3";
+import { dbCh4Questions } from "./db-ch4";
 import { calcQuestions } from "./calc";
 import { CHAPTERS } from "./tags";
 
@@ -26,6 +29,9 @@ export const ALL_QUESTIONS: Question[] = [
   ...ch5Generated,
   ...ch6Questions,
   ...calcQuestions,
+  ...dbCh1Questions,
+  ...dbCh3Questions,
+  ...dbCh4Questions,
 ];
 
 export const QUESTIONS_BY_CHAPTER = Object.fromEntries(
