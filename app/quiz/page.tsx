@@ -7,7 +7,7 @@ import { QUESTION_BY_ID } from "@/data";
 import { CHAPTER_BY_ID, tagLabel } from "@/data/tags";
 import { QuestionCard } from "@/components/QuestionCard";
 import { Shell } from "@/components/ui";
-import { formatClock, isMcq, shuffleChoices } from "@/lib/quiz";
+import { formatClock, hasChoices, shuffleChoices } from "@/lib/quiz";
 import { createSession, scoreOf, subjectOf, type QuizSession } from "@/lib/session";
 import { saveSession, startSession, useVault } from "@/lib/store";
 import type { ChapterId, Choice, Question } from "@/lib/types";
@@ -30,7 +30,7 @@ export default function QuizPage() {
   // สลับตัวเลือกครั้งเดียวต่อชุด ไม่ให้ตัวเลือกขยับไปมาระหว่างเลื่อนดูข้อ
   const choiceMap = useMemo(() => {
     const map: Record<string, Choice[]> = {};
-    for (const q of questions) if (isMcq(q)) map[q.id] = shuffleChoices(q.choices);
+    for (const q of questions) if (hasChoices(q)) map[q.id] = shuffleChoices(q.choices);
     return map;
   }, [questions]);
 

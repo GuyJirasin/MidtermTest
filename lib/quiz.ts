@@ -1,4 +1,4 @@
-import type { Choice, McqQuestion, Question } from "./types";
+import type { Choice, McqQuestion, MultiQuestion, Question } from "./types";
 
 export function shuffle<T>(items: T[]): T[] {
   const out = [...items];
@@ -21,6 +21,32 @@ export function shuffleChoices(choices: Choice[]): Choice[] {
 
 export function isMcq(q: Question): q is McqQuestion {
   return q.type === "mcq";
+}
+
+export function isMulti(q: Question): q is MultiQuestion {
+  return q.type === "multi";
+}
+
+/** ข้อที่มีตัวเลือกให้กด ทั้งปรนัยและตอบได้หลายคำตอบ — ใช้ตัดสินว่าต้อง shuffle ตัวเลือกไหม */
+export function hasChoices(q: Question): q is McqQuestion | MultiQuestion {
+  return q.type === "mcq" || q.type === "multi";
+}
+
+/** เก็บคำตอบแบบหลายตัวเลือกเป็นสตริงเดียว เพื่อให้ลงช่อง Answer.value เดิมได้ ไม่ต้องแก้ localStorage */
+export function encodeMulti(ids: string[]): string {
+  return [...ids].sort().join(",");
+}
+
+export function decodeMulti(value: string | null): string[] {
+  if (!value) return [];
+  return value.split(",").filter(Boolean);
+}
+
+/** ถูกก็ต่อเมื่อเลือกครบทุกตัวที่ถูก และไม่เลือกตัวที่ผิดเลย — ไม่มีคะแนนบางส่วน */
+export function checkMulti(selected: string[], answers: string[]): boolean {
+  if (selected.length !== answers.length) return false;
+  const want = new Set(answers);
+  return selected.every((id) => want.has(id));
 }
 
 /** ตรวจคำตอบของโจทย์คำนวณ: ยอมรับเครื่องหมายจุลภาคและช่องว่าง และเทียบด้วย tolerance */

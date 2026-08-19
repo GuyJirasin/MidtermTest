@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { DEFAULT_SUBJECT } from "@/data/tags";
+import { DEFAULT_SUBJECT, SUBJECTS } from "@/data/tags";
 import type { QuizSession } from "./session";
 import type { SubjectId } from "./types";
 
@@ -119,7 +119,8 @@ function readSubject(): SubjectId {
   if (typeof window === "undefined") return DEFAULT_SUBJECT;
   try {
     const raw = window.localStorage.getItem(SUBJECT_KEY);
-    return raw === "mm" || raw === "db" ? raw : DEFAULT_SUBJECT;
+    // เทียบกับรายชื่อวิชาจริง ไม่ hardcode ไว้ตรงนี้ เพิ่มวิชาใหม่แล้วจะได้ไม่ลืมแก้
+    return SUBJECTS.some((s) => s.id === raw) ? (raw as SubjectId) : DEFAULT_SUBJECT;
   } catch {
     return DEFAULT_SUBJECT;
   }

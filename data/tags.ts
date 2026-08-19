@@ -13,6 +13,12 @@ export const SUBJECTS: Subject[] = [
     fullName: "Database Systems",
     scope: "Coronel & Rob 10th ed. · บทที่ 1, 3, 4",
   },
+  {
+    id: "net",
+    name: "Network",
+    fullName: "Introduction to Computer Networks",
+    scope: "Kurose & Ross 8th ed. · บทที่ 1–3",
+  },
 ];
 
 export const DEFAULT_SUBJECT: SubjectId = "mm";
@@ -28,6 +34,10 @@ export const CHAPTERS: Chapter[] = [
   { id: "db-ch1", subject: "db", number: 1, titleEn: "The Database Approach", titleTh: "แนวทางฐานข้อมูล" },
   { id: "db-ch3", subject: "db", number: 3, titleEn: "Data Models", titleTh: "โมเดลข้อมูล" },
   { id: "db-ch4", subject: "db", number: 4, titleEn: "The Relational Model", titleTh: "โมเดลเชิงสัมพันธ์" },
+
+  { id: "net-ch1", subject: "net", number: 1, titleEn: "Computer Networks and the Internet", titleTh: "เครือข่ายคอมพิวเตอร์และอินเทอร์เน็ต" },
+  { id: "net-ch2", subject: "net", number: 2, titleEn: "Application Layer", titleTh: "ชั้นแอปพลิเคชัน" },
+  { id: "net-ch3", subject: "net", number: 3, titleEn: "Transport Layer", titleTh: "ชั้นทรานสปอร์ต" },
 ];
 
 export const TAGS: Tag[] = [
@@ -153,6 +163,57 @@ export const TAGS: Tag[] = [
   { id: "db-mn-composite", label: "แตก M:N เป็น composite entity", chapter: "db-ch4" },
   { id: "db-index", label: "index", chapter: "db-ch4" },
   { id: "db-codd", label: "Codd's rules", chapter: "db-ch4" },
+
+  // NET CH1 — Computer Networks and the Internet
+  { id: "net-what-is", label: "นิยาม Internet / end system / protocol", chapter: "net-ch1" },
+  { id: "net-edge-core", label: "network edge / access network / core", chapter: "net-ch1" },
+  { id: "net-access-tech", label: "DSL / HFC / FTTH / cellular", chapter: "net-ch1" },
+  { id: "net-media", label: "physical media", chapter: "net-ch1" },
+  { id: "net-switching", label: "packet vs circuit switching", chapter: "net-ch1" },
+  { id: "net-fdm-tdm", label: "FDM / TDM", chapter: "net-ch1" },
+  { id: "net-store-forward", label: "store-and-forward", chapter: "net-ch1" },
+  { id: "net-delay", label: "delay 4 ชนิด", chapter: "net-ch1" },
+  { id: "net-queuing", label: "queuing delay / traffic intensity", chapter: "net-ch1" },
+  { id: "net-throughput", label: "throughput / bottleneck", chapter: "net-ch1" },
+  { id: "net-probability", label: "ความน่าจะเป็นของ link ล้น", chapter: "net-ch1" },
+  { id: "net-isp", label: "network of networks / IXP / peering", chapter: "net-ch1" },
+  { id: "net-layering", label: "protocol layering / PDU", chapter: "net-ch1" },
+  { id: "net-encapsulation", label: "encapsulation", chapter: "net-ch1" },
+  { id: "net-security", label: "ภัยคุกคามเครือข่าย", chapter: "net-ch1" },
+
+  // NET CH2 — Application Layer
+  { id: "net-app-arch", label: "client-server vs P2P", chapter: "net-ch2" },
+  { id: "net-socket", label: "socket / process addressing", chapter: "net-ch2" },
+  { id: "net-app-needs", label: "บริการที่ application ต้องการ", chapter: "net-ch2" },
+  { id: "net-http-conn", label: "persistent vs non-persistent HTTP", chapter: "net-ch2" },
+  { id: "net-http-msg", label: "HTTP message / method / status code", chapter: "net-ch2" },
+  { id: "net-cookie", label: "cookies", chapter: "net-ch2" },
+  { id: "net-cache", label: "web cache / conditional GET", chapter: "net-ch2" },
+  { id: "net-http2", label: "HTTP/2 และ HTTP/3", chapter: "net-ch2" },
+  { id: "net-mail", label: "SMTP / POP3 / IMAP", chapter: "net-ch2" },
+  { id: "net-dns", label: "โครงสร้างและการทำงานของ DNS", chapter: "net-ch2" },
+  { id: "net-dns-record", label: "DNS resource record", chapter: "net-ch2" },
+  { id: "net-p2p", label: "P2P file distribution", chapter: "net-ch2" },
+  { id: "net-bittorrent", label: "BitTorrent", chapter: "net-ch2" },
+  { id: "net-cdn", label: "video streaming / DASH / CDN", chapter: "net-ch2" },
+
+  // NET CH3 — Transport Layer
+  { id: "net-transport-role", label: "หน้าที่ของ transport layer", chapter: "net-ch3" },
+  { id: "net-mux", label: "multiplexing / demultiplexing", chapter: "net-ch3" },
+  { id: "net-udp", label: "UDP และ checksum", chapter: "net-ch3" },
+  { id: "net-rdt", label: "หลักการ reliable data transfer", chapter: "net-ch3" },
+  { id: "net-arq", label: "Stop-and-Wait / GBN / SR (ARQ)", chapter: "net-ch3" },
+  { id: "net-window-size", label: "maximum window size", chapter: "net-ch3" },
+  { id: "net-ack", label: "accumulative ACK / NAK", chapter: "net-ch3" },
+  { id: "net-tcp-header", label: "TCP segment structure", chapter: "net-ch3" },
+  { id: "net-seq-ack", label: "sequence / acknowledgement number", chapter: "net-ch3" },
+  { id: "net-rtt", label: "RTT estimation / timeout", chapter: "net-ch3" },
+  { id: "net-retransmit", label: "retransmission / fast retransmit", chapter: "net-ch3" },
+  { id: "net-flow-control", label: "flow control (rwnd)", chapter: "net-ch3" },
+  { id: "net-handshake", label: "3-way handshake / connection management", chapter: "net-ch3" },
+  { id: "net-congestion", label: "หลักการ congestion control", chapter: "net-ch3" },
+  { id: "net-tcp-cc", label: "slow start / AIMD / Tahoe / Reno", chapter: "net-ch3" },
+  { id: "net-fairness", label: "fairness / ECN / QUIC", chapter: "net-ch3" },
 ];
 
 export const SUBJECT_BY_ID = new Map(SUBJECTS.map((s) => [s.id, s]));

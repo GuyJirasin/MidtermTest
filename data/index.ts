@@ -13,6 +13,9 @@ import { ch6Questions } from "./ch6";
 import { dbCh1Questions } from "./db-ch1";
 import { dbCh3Questions } from "./db-ch3";
 import { dbCh4Questions } from "./db-ch4";
+import { netCh1Questions } from "./net-ch1";
+import { netCh2Questions } from "./net-ch2";
+import { netCh3Questions } from "./net-ch3";
 import { calcQuestions } from "./calc";
 import { CHAPTERS } from "./tags";
 
@@ -32,6 +35,9 @@ export const ALL_QUESTIONS: Question[] = [
   ...dbCh1Questions,
   ...dbCh3Questions,
   ...dbCh4Questions,
+  ...netCh1Questions,
+  ...netCh2Questions,
+  ...netCh3Questions,
 ];
 
 export const QUESTIONS_BY_CHAPTER = Object.fromEntries(

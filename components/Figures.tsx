@@ -284,12 +284,303 @@ function MotionVector() {
   );
 }
 
+/* ────────── Network ────────── */
+
+/** ตัวช่วยวาดเส้นเวลาของ sender/receiver ใช้ร่วมกันระหว่างรูป ARQ */
+function Lifelines({ top, bottom }: { top: number; bottom: number }) {
+  return (
+    <>
+      <text x="46" y={top - 8} textAnchor="middle" fontSize="12" fontWeight="600" fill="currentColor">
+        Sender
+      </text>
+      <text x="274" y={top - 8} textAnchor="middle" fontSize="12" fontWeight="600" fill="currentColor">
+        Receiver
+      </text>
+      <line x1="46" y1={top} x2="46" y2={bottom} stroke="currentColor" strokeWidth="1.5" />
+      <line x1="274" y1={top} x2="274" y2={bottom} stroke="currentColor" strokeWidth="1.5" />
+    </>
+  );
+}
+
+/** ลูกศรส่ง segment จาก sender ไป receiver — lost = หายกลางทาง */
+function Seg({ y, label, lost, dashed }: { y: number; label: string; lost?: boolean; dashed?: boolean }) {
+  const endX = lost ? 180 : 268;
+  return (
+    <>
+      <line
+        x1="48"
+        y1={y}
+        x2={endX}
+        y2={y + 10}
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeDasharray={dashed ? "4 3" : undefined}
+        markerEnd={lost ? undefined : "url(#net-arrow)"}
+      />
+      <text x="104" y={y - 2} fontSize="11" fill="currentColor">
+        {label}
+      </text>
+      {lost ? (
+        <text x="186" y={y + 15} fontSize="14" fontWeight="700" fill="var(--bad)">
+          ✕
+        </text>
+      ) : null}
+    </>
+  );
+}
+
+/** ลูกศรตอบกลับจาก receiver มา sender */
+function Ack({ y, label }: { y: number; label: string }) {
+  return (
+    <>
+      <line x1="272" y1={y} x2="52" y2={y + 10} stroke="currentColor" strokeWidth="1.4" markerEnd="url(#net-arrow)" />
+      <text x="204" y={y + 20} fontSize="11" fill="currentColor">
+        {label}
+      </text>
+    </>
+  );
+}
+
+function ArrowDefs() {
+  return (
+    <defs>
+      <marker id="net-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+      </marker>
+    </defs>
+  );
+}
+
+/** องค์ประกอบของ delay ทั้ง 4 ตัวที่ node เดียว */
+function NodalDelay() {
+  return (
+    <div className={frameClass} style={frameStyle}>
+      <svg viewBox="0 0 460 196" className="w-full" role="img" aria-label="แผนภาพองค์ประกอบของความหน่วงทั้งสี่ชนิดที่เราเตอร์หนึ่งตัว">
+        <ArrowDefs />
+        <line x1="8" y1="56" x2="60" y2="56" stroke="currentColor" strokeWidth="1.4" markerEnd="url(#net-arrow)" />
+        {[0, 1, 2].map((i) => (
+          <rect
+            key={i}
+            x={66 + i * 14}
+            y="46"
+            width="11"
+            height="20"
+            rx="2"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.2"
+          />
+        ))}
+        <circle cx="132" cy="56" r="24" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <text x="132" y="60" textAnchor="middle" fontSize="12" fontWeight="600" fill="currentColor">
+          A
+        </text>
+        <line x1="156" y1="56" x2="340" y2="56" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="366" cy="56" r="24" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <text x="366" y="60" textAnchor="middle" fontSize="12" fontWeight="600" fill="currentColor">
+          B
+        </text>
+
+        {/* ป้ายกำกับสลับสองแถว เพราะชื่อยาวกว่าช่วงที่มันกำกับ ถ้าวางแถวเดียวจะทับกัน */}
+        <line x1="66" y1="82" x2="106" y2="82" stroke="currentColor" strokeWidth="1" />
+        <line x1="86" y1="82" x2="86" y2="94" stroke="currentColor" strokeWidth="1" />
+        <text x="86" y="106" textAnchor="middle" fontSize="10.5" fill="currentColor">
+          queuing
+        </text>
+
+        <line x1="158" y1="82" x2="230" y2="82" stroke="currentColor" strokeWidth="1" />
+        <line x1="194" y1="82" x2="194" y2="94" stroke="currentColor" strokeWidth="1" />
+        <text x="194" y="106" textAnchor="middle" fontSize="10.5" fill="currentColor">
+          transmission = L / R
+        </text>
+
+        <line x1="110" y1="82" x2="154" y2="82" stroke="currentColor" strokeWidth="1" />
+        <line x1="132" y1="82" x2="132" y2="118" stroke="currentColor" strokeWidth="1" />
+        <text x="132" y="130" textAnchor="middle" fontSize="10.5" fill="currentColor">
+          processing
+        </text>
+
+        <line x1="234" y1="82" x2="340" y2="82" stroke="currentColor" strokeWidth="1" />
+        <line x1="287" y1="82" x2="287" y2="118" stroke="currentColor" strokeWidth="1" />
+        <text x="287" y="130" textAnchor="middle" fontSize="10.5" fill="currentColor">
+          propagation = d / s
+        </text>
+
+        <text x="230" y="168" textAnchor="middle" fontSize="11" fontWeight="600" fill="currentColor">
+          d(nodal) = d(proc) + d(queue) + d(trans) + d(prop)
+        </text>
+      </svg>
+      <Caption>ความหน่วงที่ node เดียว — transmission ขึ้นกับขนาดแพ็กเก็ต ส่วน propagation ขึ้นกับระยะทาง</Caption>
+    </div>
+  );
+}
+
+/** Go-Back-N: segment 1 หาย ทำให้ 2 กับ 3 ที่มาถึงถูกทิ้ง แล้วส่งใหม่ทั้งชุด */
+function GbnTimeline() {
+  return (
+    <div className={frameClass} style={frameStyle}>
+      <svg viewBox="-46 0 366 300" className="w-full" role="img" aria-label="แผนภาพเวลาของ Go-Back-N เมื่อ segment ที่ 1 สูญหาย">
+        <ArrowDefs />
+        <Lifelines top={26} bottom={286} />
+        <Seg y={36} label="send 0" />
+        <Seg y={60} label="send 1" lost />
+        <Seg y={84} label="send 2" />
+        <Seg y={108} label="send 3" />
+        <Ack y={62} label="ACK 1" />
+        <text x="286" y="104" fontSize="10" fill="var(--bad)">
+          ทิ้ง
+        </text>
+        <text x="286" y="128" fontSize="10" fill="var(--bad)">
+          ทิ้ง
+        </text>
+        <line x1="20" y1="70" x2="20" y2="176" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
+        <text x="16" y="128" textAnchor="end" fontSize="10" fill="currentColor">
+          timeout
+        </text>
+        <Seg y={186} label="resend 1" dashed />
+        <Seg y={214} label="resend 2" dashed />
+        <Seg y={242} label="resend 3" dashed />
+        <Ack y={252} label="ACK 4" />
+      </svg>
+      <Caption>ผู้รับมี window เท่ากับ 1 เสมอ — segment 2 และ 3 ถึงแม้ไม่มี error ก็ถูกทิ้งเพราะผิดลำดับ</Caption>
+    </div>
+  );
+}
+
+/** Selective Repeat: segment 1 หาย ผู้รับ buffer 2,3 ไว้ แล้วส่งใหม่เฉพาะตัวที่หาย */
+function SrTimeline() {
+  return (
+    <div className={frameClass} style={frameStyle}>
+      <svg viewBox="0 0 320 260" className="w-full" role="img" aria-label="แผนภาพเวลาของ Selective Repeat เมื่อ segment ที่ 1 สูญหาย">
+        <ArrowDefs />
+        <Lifelines top={26} bottom={246} />
+        <Seg y={36} label="send 0" />
+        <Seg y={60} label="send 1" lost />
+        <Seg y={84} label="send 2" />
+        <Seg y={108} label="send 3" />
+        <Ack y={62} label="ACK 0" />
+        <text x="282" y="104" fontSize="10" fill="var(--ok)">
+          buffer
+        </text>
+        <text x="282" y="128" fontSize="10" fill="var(--ok)">
+          buffer
+        </text>
+        <Ack y={140} label="NAK 1" />
+        <Seg y={186} label="resend 1 เท่านั้น" dashed />
+        <Ack y={206} label="ACK 4" />
+      </svg>
+      <Caption>ผู้รับเก็บ segment ที่ถูกต้องแต่ผิดลำดับไว้ใน buffer จึงส่งซ้ำเฉพาะตัวที่หาย</Caption>
+    </div>
+  );
+}
+
+/** กราฟ cwnd — slow start, congestion avoidance และการตอบสนองต่อ loss ของ Tahoe กับ Reno */
+function TcpSawtooth() {
+  return (
+    <div className={frameClass} style={frameStyle}>
+      <svg viewBox="0 0 420 230" className="w-full" role="img" aria-label="กราฟขนาดหน้าต่างความแออัดเทียบกับเวลา แสดงความต่างระหว่าง TCP Tahoe และ Reno">
+        <ArrowDefs />
+        <line x1="46" y1="196" x2="404" y2="196" stroke="currentColor" strokeWidth="1.4" markerEnd="url(#net-arrow)" />
+        <line x1="46" y1="196" x2="46" y2="18" stroke="currentColor" strokeWidth="1.4" markerEnd="url(#net-arrow)" />
+        <text x="404" y="214" textAnchor="end" fontSize="11" fill="currentColor">
+          เวลา (RTT)
+        </text>
+        <text x="40" y="20" textAnchor="end" fontSize="11" fill="currentColor">
+          cwnd
+        </text>
+
+        <line x1="46" y1="86" x2="404" y2="86" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" opacity="0.6" />
+        <text x="400" y="80" textAnchor="end" fontSize="10" fill="var(--text-soft)">
+          ssthresh เริ่มต้น
+        </text>
+
+        {/* slow start: เพิ่มเท่าตัวทุก RTT */}
+        <polyline points="46,196 70,186 94,166 118,126 142,86" fill="none" stroke="currentColor" strokeWidth="2.2" />
+        <text x="86" y="150" fontSize="10.5" fill="currentColor">
+          slow start
+        </text>
+        {/* congestion avoidance: เพิ่มทีละ 1 MSS */}
+        <polyline points="142,86 170,78 198,70 226,62 254,54" fill="none" stroke="currentColor" strokeWidth="2.2" />
+        <text x="140" y="44" fontSize="10.5" fill="currentColor">
+          congestion avoidance
+        </text>
+        <circle cx="254" cy="54" r="4" fill="var(--bad)" />
+        <text x="262" y="44" fontSize="10.5" fill="var(--bad)">
+          3 dup ACK
+        </text>
+
+        {/* Reno: ลดครึ่ง */}
+        <polyline points="254,54 268,125 300,117 332,109 364,101" fill="none" stroke="var(--ok)" strokeWidth="2.2" />
+        <text x="306" y="136" fontSize="10.5" fontWeight="600" fill="var(--ok)">
+          Reno → ครึ่งหนึ่ง
+        </text>
+        {/* Tahoe: กลับไป 1 */}
+        <polyline
+          points="254,54 268,196 292,186 316,166 340,126 364,86"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeDasharray="5 4"
+          opacity="0.75"
+        />
+        <text x="286" y="182" fontSize="10.5" fontWeight="600" fill="currentColor" opacity="0.85">
+          Tahoe → 1 MSS
+        </text>
+      </svg>
+      <Caption>เมื่อเจอ 3 dup ACK — Reno เข้า fast recovery ลด cwnd ครึ่งเดียว ส่วน Tahoe ตัดกลับไปเริ่ม slow start ใหม่</Caption>
+    </div>
+  );
+}
+
+/** การเปิดการเชื่อมต่อ TCP สามทาง พร้อมค่า seq และ ack ในแต่ละขั้น */
+function ThreeWayHandshake() {
+  return (
+    <div className={frameClass} style={frameStyle}>
+      <svg viewBox="0 0 320 210" className="w-full" role="img" aria-label="แผนภาพการจับมือสามทางของ TCP">
+        <ArrowDefs />
+        <text x="46" y="18" textAnchor="middle" fontSize="12" fontWeight="600" fill="currentColor">
+          Client
+        </text>
+        <text x="274" y="18" textAnchor="middle" fontSize="12" fontWeight="600" fill="currentColor">
+          Server
+        </text>
+        <line x1="46" y1="26" x2="46" y2="196" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="274" y1="26" x2="274" y2="196" stroke="currentColor" strokeWidth="1.5" />
+
+        <line x1="48" y1="46" x2="268" y2="58" stroke="currentColor" strokeWidth="1.6" markerEnd="url(#net-arrow)" />
+        <text x="100" y="42" fontSize="11" fontWeight="600" fill="currentColor">
+          SYN = 1, seq = x
+        </text>
+
+        <line x1="272" y1="94" x2="52" y2="106" stroke="currentColor" strokeWidth="1.6" markerEnd="url(#net-arrow)" />
+        <text x="86" y="122" fontSize="11" fontWeight="600" fill="currentColor">
+          SYN = 1, ACK = 1, seq = y, ack = x+1
+        </text>
+
+        <line x1="48" y1="146" x2="268" y2="158" stroke="currentColor" strokeWidth="1.6" markerEnd="url(#net-arrow)" />
+        <text x="86" y="142" fontSize="11" fontWeight="600" fill="currentColor">
+          ACK = 1, seq = x+1, ack = y+1
+        </text>
+        <text x="120" y="186" fontSize="10" fill="var(--text-soft)">
+          ขั้นที่สามแนบข้อมูลไปด้วยได้
+        </text>
+      </svg>
+      <Caption>ขั้นที่หนึ่งและสองยังห้ามแนบข้อมูล — ฝั่ง server จองทรัพยากรจริงหลังได้รับ ACK ขั้นที่สาม</Caption>
+    </div>
+  );
+}
+
 const FIGURES: Record<string, () => ReactNode> = {
   posterization: Posterization,
   convolution: Convolution,
   "gamut-crt-lcd": GamutCrtLcd,
   "subsampling-420": Subsampling420,
   "motion-vector": MotionVector,
+  "net-nodal-delay": NodalDelay,
+  "net-gbn-timeline": GbnTimeline,
+  "net-sr-timeline": SrTimeline,
+  "net-tcp-sawtooth": TcpSawtooth,
+  "net-3way-handshake": ThreeWayHandshake,
 };
 
 export function Figure({ name }: { name: string }) {

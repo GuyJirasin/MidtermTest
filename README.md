@@ -6,6 +6,7 @@
 |---|---|
 | **Multimedia Technology** | 06016403 · บทที่ 1–6 |
 | **Database Systems** | Coronel & Rob, Database Principles 10th ed. · บทที่ 1, 3, 4 |
+| **Introduction to Computer Networks** | Kurose & Ross, Top-Down Approach 8th ed. · บทที่ 1–3 |
 
 Next.js (App Router) + TypeScript + Tailwind — เป็น static ทั้งหมด ไม่มี backend / database
 ทุกอย่างเก็บใน localStorage ของเบราว์เซอร์
@@ -108,6 +109,28 @@ lib/
 }
 ```
 
+ข้อตอบได้หลายคำตอบ ใช้ `type: "multi"` และเก็บคำตอบถูกไว้ใน `answers` เป็นอาร์เรย์
+ตรวจแบบเซตคือต้องเลือกครบทุกตัวที่ถูกและห้ามเลือกตัวที่ผิด ไม่มีคะแนนบางส่วน
+ตอนเฉลยจะไฮไลต์แยกว่าข้อไหน "ต้องเลือกแต่ไม่ได้เลือก" กับข้อไหน "ไม่ต้องเลือกแต่เลือกมา"
+
+```ts
+{
+  id: "net-ch3-27",
+  chapter: "net-ch3",
+  source: "generated",
+  type: "multi",
+  stars: 3,
+  tags: ["net-udp"],
+  prompt: "ข้อใดบ้างเป็นสิ่งที่ UDP ให้บริการ",
+  choices: [ /* เหมือน mcq ทุกตัวต้องมี why */ ],
+  answers: ["a", "b", "e"],   // ต้องมีอย่างน้อย 2 ตัว และห้ามถูกครบทุกตัวเลือก
+  explanation: "…",
+}
+```
+
+ข้อถูก/ผิด ไม่มี type แยก ให้ใช้ `type: "mcq"` ที่มีสองตัวเลือก id `t` กับ `f`
+แล้วใส่ `pin: true` ทั้งคู่ เพื่อให้ "ถูก" อยู่บน "ผิด" เสมอไม่ถูกสลับ
+
 `pin: true` ใช้กับตัวเลือกอย่าง "ถูกทุกข้อ" / "ไม่มีข้อถูก" ซึ่งต้องอยู่ท้ายเสมอ
 ไม่งั้นเมื่อสลับตัวเลือกแล้วโจทย์จะอ่านไม่รู้เรื่อง
 
@@ -169,3 +192,35 @@ table: {
 entity กับ referential integrity, PRODUCT กับ JOIN, homonym กับ synonym
 
 ข้อของบทที่ 4 ใช้ตาราง P / C / A ชุดเดียวกันซ้ำหลายข้อ เพื่อให้คุ้นตาเหมือนตอนทำแบบฝึกหัด
+
+### Introduction to Computer Networks (รวม 70 ข้อ)
+
+| บท | ปรนัย | ถูก/ผิด | เขียนตอบเป็นตัวเลข | ตอบได้หลายคำตอบ | รวม |
+|---|---|---|---|---|---|
+| บทที่ 1 Computer Networks and the Internet | 10 | 4 | 4 | 2 | 20 |
+| บทที่ 2 Application Layer | 10 | 4 | 3 | 3 | 20 |
+| บทที่ 3 Transport Layer | 15 | 6 | 5 | 4 | 30 |
+
+ทุกข้อเป็นระดับปานกลางถึงยาก (★★ 30 ข้อ · ★★★ 40 ข้อ) ไม่มีข้อระดับ ★
+บทที่ 3 มีข้อมากกว่าบทอื่น เพราะเลกเชอร์ของอาจารย์ระบุว่าเนื้อหา week 6–7 คือส่วนที่ออกสอบ
+
+นอกจากเนื้อหาตามหนังสือ Kurose แล้ว บทที่ 3 ยังรวมสิ่งที่อาจารย์สอนเพิ่มไว้ด้วย ได้แก่
+ARQ ทั้งสามแบบในศัพท์แบบ Forouzan (Stop-and-Wait / Go-Back-N / Selective Repeat),
+NAK, และสูตร maximum window size คือ 2ⁿ − 1 สำหรับ GBN กับ 2ⁿ ÷ 2 สำหรับ SR
+ซึ่งไม่มีในหนังสือแต่อาจารย์เน้นและเขียนไว้บนกระดาน
+
+ตัวลวงสร้างจากคู่ศัพท์ที่สับสนกันจริง เช่น transmission กับ propagation delay,
+flow control กับ congestion control, rwnd กับ cwnd, recursive กับ iterative query,
+push กับ pull, `MAIL FROM:` กับ `From:`, GBN กับ SR
+
+รูปประกอบ 5 รูปวาดเป็น SVG ได้แก่ `net-nodal-delay`, `net-gbn-timeline`,
+`net-sr-timeline`, `net-3way-handshake`, `net-tcp-sawtooth`
+
+ตรวจความถูกต้องของคลังข้อสอบได้ด้วย
+
+```bash
+node scripts/validate-net.mjs
+```
+
+สคริปต์นี้เช็ค id ซ้ำ, tag ที่ไม่มีใน `tags.ts`, ชื่อรูปที่ไม่มีใน `Figures.tsx`,
+answer ที่ไม่อยู่ในตัวเลือก, ข้อ multi ที่ไม่มีตัวลวง และนับสัดส่วนประเภทกับระดับดาวให้

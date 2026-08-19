@@ -1,5 +1,5 @@
 /** วิชาที่มีคลังข้อสอบอยู่ในแอป */
-export type SubjectId = "mm" | "db";
+export type SubjectId = "mm" | "db" | "net";
 
 /**
  * id ของบท — ตั้งชื่อแยกตามวิชา
@@ -14,7 +14,10 @@ export type ChapterId =
   | "ch6"
   | "db-ch1"
   | "db-ch3"
-  | "db-ch4";
+  | "db-ch4"
+  | "net-ch1"
+  | "net-ch2"
+  | "net-ch3";
 
 /** 1 = ง่าย, 2 = ปานกลาง, 3 = ยาก */
 export type Stars = 1 | 2 | 3;
@@ -81,7 +84,19 @@ export interface NumericQuestion extends BaseQuestion {
   explanation: string;
 }
 
-export type Question = McqQuestion | NumericQuestion;
+/**
+ * ข้อที่ตอบได้หลายคำตอบ — ต้องเลือกให้ครบทุกตัวที่ถูกและห้ามเลือกตัวที่ผิด
+ * ตรวจแบบเซต ไม่ให้คะแนนบางส่วน เพราะข้อสอบจริงก็ไม่ให้
+ */
+export interface MultiQuestion extends BaseQuestion {
+  type: "multi";
+  choices: Choice[];
+  /** id ของตัวเลือกที่ถูกทั้งหมด */
+  answers: string[];
+  explanation: string;
+}
+
+export type Question = McqQuestion | NumericQuestion | MultiQuestion;
 
 export interface Chapter {
   id: ChapterId;
